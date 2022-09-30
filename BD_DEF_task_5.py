@@ -70,19 +70,20 @@ def delete_client(conn, id):
                 """)
 
 # 7.Функция, позволяющая найти клиента по его данным (имени, фамилии, email-у или телефону)
-def find_clients(conn, search_by, str):
-    with conn.cursor() as cur:
-        cur.execute(f"""
-                    SELECT c.id, name, last_name, email, phones FROM client c
-                    WHERE {search_by} = '{str}';
-                    """)
-        print(f"Информация о клиенте {cur.fetchall()}") # Хотел здесь через if , но они у меня не работают
-        find_phone(conn, search_by, str)
-        # Ответьте пожалуйста почему эта часть кода с if не работает
-        # if cur.fetchall() == ( ):
-        #     print(f"Дополнительный номер телефона клиента {cur.fetchall()}")
-        # if cur.fetchall() != ( ):
-        #     find_phone(conn, search_by, str)
+# def find_clients(conn, search_by, str):
+#     with conn.cursor() as cur:
+#         cur.execute(f"""
+#                     SELECT c.id, name, last_name, email, phones FROM client c
+#                     WHERE {search_by} = '{str}';
+#                     """)
+        
+#         print(f"Информация о клиенте {cur.fetchall()}") # Хотел здесь через if , но они у меня не работают
+#         # find_phone(conn, search_by, str)
+#         # # Ответьте пожалуйста почему эта часть кода с if не работает
+#         # if cur.fetchall() == ( ):
+#         #     print(f"Дополнительный номер телефона клиента {cur.fetchall()}")
+#         # if cur.fetchall() != ( ):
+#         #     find_phone(conn, search_by, str)
                
         
 def find_phone(conn, search_by, str):
@@ -92,13 +93,90 @@ def find_phone(conn, search_by, str):
                     JOIN phone p ON c.id = p.client_id
                     WHERE {search_by} = '{str}';
                     """)
+        # a = conn.fetchall()
         print(f"Информация о клиенте c дополнительным номером телефона клиента {cur.fetchall()}")
-        # Ответьте пожалуйста всё таки почему эта часть кода с if не работает, ну только конкретно        
-        # if find_phone != None:
-        #     print(f"Дополнительный номер телефона клиента {cur.fetchall()}")
-        # if find_phone == None:
-        #     print('if-2')
-        #     find_clients(conn, search_by, str)
+#         # Ответьте пожалуйста всё таки почему эта часть кода с if не работает, ну только конкретно        
+#         if a != None:
+#             print(f"Дополнительный номер телефона клиента {cur.fetchall()}")
+#         if a == None:
+#             print('if-2')
+#             find_clients(conn, search_by, str)
+    
+    
+    
+    
+def find_clients(conn, search_by, str):
+    cur.execute(f"""
+                SELECT c.id, name, last_name, email FROM client c
+                WHERE {search_by} = '{str}';
+                """)
+    print(f"Информация о клиенте {cur.fetchall()}") # Хотел здесь через if , но они у меня не работают
+    find_phone(conn, search_by, str)    
+    # Ответьте пожалуйста почему эта часть кода с if не работает
+    if len(cur.fetchall()) != 0:
+        print(f"Дополнительный номер телефона клиента {cur.fetchall()}")
+    if len(cur.fetchall()) > 1:
+        find_phone(cur, search_by, str)
+    
+# def find_clients(cur, search_by, str):
+#     cur.execute("""
+#                 SELECT c.id, name, last_name, email FROM client c
+#                 WHERE search_by = '{str}';
+#                 """, (search_by, str))
+#     print(f"Информация о клиенте {cur.fetchall()}") # Хотел здесь через if , но они у меня не работают
+    # find_phone(cur, search_by, str)
+               
+        
+# def find_phone(cur, search_by, str):
+#     cur.execute(f"""
+#                 SELECT c.id, name, last_name, email, number_phone FROM client c
+#                 JOIN phone p ON c.id = p.client_id
+#                 WHERE {search_by} = '{str}';
+#                 """)
+#     print(f"Информация о клиенте c дополнительным номером телефона клиента {cur.fetchall()}")
+#     # Ответьте пожалуйста всё таки почему эта часть кода с if не работает, ну только конкретно        
+#     if len(cur.fetchall()) != 0:
+#         print('if-1')
+#         print(f"Дополнительный номер телефона клиента {cur.fetchall()}")
+#     elif len(cur.fetchall()) == 0:
+#         print('if-2')
+#         find_clients(cur, search_by, str)
+    
+# def find_phone(cur, search_by, str):
+#     cur.execute(f"""
+#                 SELECT c.id, name, last_name, email, number_phone FROM client c
+#                 JOIN phone p ON c.id = p.client_id
+#                 WHERE {search_by} = %strs;
+#                 """, (search_by, str))
+#     print(f"Информация о клиенте c дополнительным номером телефона клиента {cur.fetchall()}")
+
+# def find_client(cur, dic):
+#     for k, v in dic.items():
+#         cur.execute(f"""
+#                 SELECT c.id, name, last_name, email, number_phone FROM client c
+#                 JOIN phone p ON c.id = p.client_id
+#                 WHERE {k}=%s;
+#                 """, (v,))
+#     print(cur.fetchall()) 
+
+# def find_client(cur, filds_dict: dict):
+#     srt = ' or '.join([f"{x} = '{y}'" for x, y in filds_dict.items() if y != None])
+#     with conn.cursor() as cur:
+#         cur.execute(f"""
+#                     SELECT c.id, name, last_name, email, number_phone FROM client c
+#                     JOIN phone p ON c.id = p.client_id
+#                     WHERE {srt};
+#                     """)
+#         print(cur.fetchall())    
+
+# def find_clients(cur, filds_dict):
+#     str = ' and '.join([f"{x} = '{y}'" for x, y in filds_dict.items() if y != None])
+#     cur.execute("""SELECT name, last_name, email, p.number_phone FROM client c 
+#                 JOIN phone p ON c.id = p.client_id 
+#                 WHERE """ + str)
+#     print(f"Информация о клиенте {cur.fetchall()}")    
+    
+    
             
         
 
@@ -122,8 +200,8 @@ with conn.cursor() as cur:
     # 3.Вызов функции позволяющей добавить телефон для существующего клиента
     add_phone(conn, 89649156228, 1)
     print('Новый номер телефона добавлен на 1')
-    add_phone(conn, 89284021118, 2)
-    print('Новый номер телефона добавлен на 2')
+    # add_phone(conn, 89284021118, 2)
+    # print('Новый номер телефона добавлен на 2')
     add_phone(conn, 89281002233, 4)
     print('Новый номер телефона добавлен на 4')    
     # add_phone(conn, 89283334455, 3)
@@ -144,6 +222,9 @@ with conn.cursor() as cur:
     # 7.Вызов функции позволяющей найти клиента по его данным (имени, фамилии, email-у или телефону) 
     find_clients(conn, 'last_name', 'Харламов')
     print('Клиент 22222 найден')
+    
+    # find_phone(conn, 'last_name', 'Харламов')
+    # print('Клиент 33333 найден')
         
 
 
